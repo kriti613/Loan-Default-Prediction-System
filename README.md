@@ -25,7 +25,7 @@ After cleaning and preprocessing, the dataset includes:
 13. **Default** (target variable)
 14. **LoanToIncomeRatio** (engineered feature)
 15. **CreditUtilizationRate** (engineered feature)
-16-27. One-hot encoded categorical columns:
+16. One-hot encoded categorical columns:
     - Education: `Education_High School`, `Education_Master's`, `Education_PhD`
     - EmploymentType: `EmploymentType_Part-time`, `EmploymentType_Self-employed`, `EmploymentType_Unemployed`
     - MaritalStatus: `MaritalStatus_Married`, `MaritalStatus_Single`
