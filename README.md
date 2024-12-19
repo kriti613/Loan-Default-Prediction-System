@@ -1,78 +1,89 @@
 # Loan Default Prediction System
 
-This project aims to predict loan defaults using machine learning techniques. The dataset contains various features such as income, loan amount, credit score, and demographic information. The project involves data preprocessing, exploratory data analysis (EDA), feature engineering, model building, and deployment using Streamlit.
+## Overview
+The **Loan Default Prediction System** is a machine learning project that aims to predict the likelihood of loan default using various borrower and loan-related attributes. The project involves data preprocessing, exploratory data analysis, feature engineering, model building, and deployment via a Streamlit application.
 
-## Table of Contents
-- [Dataset Overview](#dataset-overview)
-- [Exploratory Data Analysis (EDA)](#exploratory-data-analysis-eda)
-- [Feature Engineering](#feature-engineering)
-- [Model Development](#model-development)
-- [Results and Insights](#results-and-insights)
-- [Deployment](#deployment)
-- [Installation and Usage](#installation-and-usage)
+## Dataset Details
+After cleaning and preprocessing, the dataset includes:
+- **Entries:** 255,347
+- **Columns:** 27
+- **No missing values or duplicates**
 
-## Dataset Overview
-- **Number of Variables:** 18
-- **Number of Observations (Rows):** 255,347
-- **Missing Cells:** 0 (0.0%)
-- **Duplicate Rows:** 0 (0.0%)
-- **Total Dataset Size in Memory:** 52.6 MiB
-- **Average Record Size in Memory:** 216.0 Bytes
+### Data Columns:
+1. **Age** (numerical)
+2. **Income** (numerical)
+3. **LoanAmount** (numerical)
+4. **CreditScore** (numerical)
+5. **MonthsEmployed** (numerical)
+6. **NumCreditLines** (numerical)
+7. **InterestRate** (numerical)
+8. **LoanTerm** (numerical)
+9. **DTIRatio** (numerical)
+10. **HasMortgage** (binary)
+11. **HasDependents** (binary)
+12. **HasCoSigner** (binary)
+13. **Default** (target variable)
+14. **LoanToIncomeRatio** (engineered feature)
+15. **CreditUtilizationRate** (engineered feature)
+16-27. One-hot encoded categorical columns:
+    - Education: `Education_High School`, `Education_Master's`, `Education_PhD`
+    - EmploymentType: `EmploymentType_Part-time`, `EmploymentType_Self-employed`, `EmploymentType_Unemployed`
+    - MaritalStatus: `MaritalStatus_Married`, `MaritalStatus_Single`
+    - LoanPurpose: `LoanPurpose_Business`, `LoanPurpose_Education`, `LoanPurpose_Home`, `LoanPurpose_Other`
+
+### Memory Usage:
+52.6 MB
 
 ## Exploratory Data Analysis (EDA)
-1. **No Missing Values:** The dataset is complete with no missing values.
-2. **No Duplicate Rows:** The dataset contains no duplicate records.
-3. **Box Plot Analysis:**
-   - Columns such as `Income` and `LoanAmount` have **no outliers**, as shown in their box plots.
-   - These observations indicate a clean dataset ready for feature engineering and modeling.
+1. **Alerts:**
+   - `CreditUtilizationRate` and `LoanAmount` are highly correlated.
+   - `MaritalStatus_Married` and `MaritalStatus_Single` are highly correlated.
+   <img src="https://github.com/kriti613/Loan-Default-Prediction-System/blob/main/correlation_HeatMap.png" style="height: 80%; width: 80%">
+
+   - `LoanToIncomeRatio` is highly skewed (γ1 = 228.9997178).
+
+   - `Age` has 4,884 (1.9%) zeros.
+   
+3. **Box Plots:**
+   - No outliers in `Income` and `LoanAmount`.
+   <img src="https://github.com/kriti613/Loan-Default-Prediction-System/blob/main/incomeloanamountBoxPlot.png" style="height: 80%; width: 80%">
+   
+   - `LoanToIncomeRatio` has many outliers.
+   - `CreditUtilizationRate` has no outliers.
+    <img src="https://github.com/kriti613/Loan-Default-Prediction-System/blob/main/income_LoanAmount_boxplot.png" style="height: 80%; width: 80%">
 
 ## Feature Engineering
-New features were created to enhance the predictive power of the dataset:
-1. **Loan-to-Income Ratio:**
+1. **Binary Columns:**
+   - `HasMortgage`, `HasDependents`, `HasCoSigner`
+
+2. **One-hot Encoding:**
+   - Categorical Columns: `Education`, `EmploymentType`, `MaritalStatus`, `LoanPurpose`
+
+3. **Engineered Features:**
    ```python
    df['LoanToIncomeRatio'] = df['LoanAmount'] / df['Income']
-   ```
-   - Box plot analysis revealed **many outliers** in this feature.
-
-2. **Credit Utilization Rate:**
-   ```python
    df['CreditUtilizationRate'] = df['LoanAmount'] / df['CreditScore']
    ```
-   - Box plot analysis showed **no outliers** in this feature.
 
-### Label Encoding
-- **Binary Columns:** Label encoding was applied to binary categorical features.
-- **Categorical Columns:** One-hot encoding was used for multi-class categorical features.
+4. **Numerical Features Scaling:**
+   - Columns scaled using `MinMaxScaler`:
+     - `Age`, `Income`, `LoanAmount`, `CreditScore`, `MonthsEmployed`, `NumCreditLines`, `InterestRate`, `LoanTerm`, `DTIRatio`, `LoanToIncomeRatio`, `CreditUtilizationRate`
 
-### Feature Scaling
-- **Numerical Features Scaling:** MinMaxScaler was applied to normalize numerical features to a common scale.
+## Models and Accuracy
+Several models were evaluated and compared based on their accuracy:
+| Model              | Accuracy  |
+|--------------------|-----------|
+| Gradient Boosting  | 0.887781  |
+| CatBoost           | 0.886881  |
+| Random Forest      | 0.886626  |
+| AdaBoost           | 0.886313  |
+| XGBoost            | 0.886176  |
+| Extra Trees        | 0.885667  |
+| Decision Tree      | 0.804327  |
 
-## Model Development
-The following machine learning models were implemented and evaluated:
-- **Decision Tree**
-- **Random Forest**
-- **Gradient Boosting**
-- **XGBoost**
-- **AdaBoost**
-- **Extra Trees**
-- **CatBoost**
-
-### Accuracy Comparison
-| Model               | Accuracy   |
-|---------------------|------------|
-| Gradient Boosting   | **0.887781** |
-| CatBoost            | 0.886881   |
-| Random Forest       | 0.886626   |
-| AdaBoost            | 0.886313   |
-| XGBoost             | 0.886176   |
-| Extra Trees         | 0.885667   |
-| Decision Tree       | 0.804327   |
-
-### Best Model
-- **Gradient Boosting** was identified as the most accurate model with an accuracy of **88.78%**.
-
-### Model Saving
-- The Gradient Boosting model was saved as a `.pkl` file for deployment.
+**Conclusion:** Gradient Boosting is the most accurate model for this dataset.
 
 ## Deployment
-The model was deployed using a Streamlit application to provide an interactive interface for loan default prediction.
+The trained Gradient Boosting model was saved as a `.pkl` file and deployed using a Streamlit application for user-friendly predictions.
+
+<img src="https://github.com/kriti613/Loan-Default-Prediction-System/blob/main/LoanDefaultPredictionApp.png" style="height: 80%; width: 80%">
